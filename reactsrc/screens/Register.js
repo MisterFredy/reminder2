@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {SafeAreaView,ScrollView,View,Text,StatusBar,Image,AsyncStorage,TextInput,TouchableOpacity,ImageBackground,Alert} from 'react-native';
+import {SafeAreaView,ScrollView,View,Text,StatusBar,Image,AsyncStorage,TextInput,TouchableOpacity,ImageBackground,Alert,Keyboard,KeyboardAvoidingView,TouchableWithoutFeedback} from 'react-native';
 import { Header,LearnMoreLinks,Colors,DebugInstructions,ReloadInstructions,} from 'react-native/Libraries/NewAppScreen';
 import css from '../assets/stylesheet/styles';
 import { NavigationContainer } from '@react-navigation/native';
@@ -50,6 +50,11 @@ export default class Register extends Component{
 
     Register({ navigation }){
             return(
+                 <KeyboardAvoidingView
+                behavior={Platform.OS == "ios" ? "padding" : "height"}
+                style={{flex:1}}
+                >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View style={css.backgroundDarkBlue}>
                 <View style={css.col}>
                     <View style={[css.aligncenter,{marginTop:80}]}>
@@ -91,6 +96,7 @@ export default class Register extends Component{
                             style={[css.colorwhite,css.borderbottom,{fontFamily:'Montserrat-SemiBold',marginTop:10}]}
                             placeholder="telephone (Gunakan 62 bukan 0 tanpa +)"
                             placeholderTextColor="#fff"  
+                            keyboardType={'numeric'}
                              value={this.state.phone}
                              onChangeText={(text)=> this.setState({phone:text})}
                         />
@@ -110,6 +116,8 @@ export default class Register extends Component{
             </View>
                 
             </View>
+            </TouchableWithoutFeedback>
+            </KeyboardAvoidingView>
         )
     }
 

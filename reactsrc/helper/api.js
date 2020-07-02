@@ -6,7 +6,7 @@ class Api {
     constructor(){
         this.api_token = null
         this.client = null
-        this.api_url = "http://10.0.2.2/api/"      
+        this.api_url = "http://192.168.1.2/api/"      
     }
 
     async create(){

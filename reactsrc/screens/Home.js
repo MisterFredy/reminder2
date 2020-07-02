@@ -7,12 +7,15 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 export default class Home extends Component{
 
-    constructor(props) {
+   constructor(props) {
                  super(props)
+   
                 this.state = {
-                 username: "",
+                 Biocides: [],
                  refreshing:false,
+                 isLoading: true,
                 };
+                this.GetAPI = this.GetAPI.bind(this)
         }
 
      componentDidMount(){
@@ -20,6 +23,33 @@ export default class Home extends Component{
             'hardwareBackPress',
             true
             );
+    }
+
+    async  GetAPI(){
+       let api = new Api();
+        await api.create();
+        let client = api.getClient();
+        let { Biocides } = this.state;
+        let url = '/reminder'
+       return client.get(url).then((response)=>{
+              
+            // console.log('refreshing Course Detail: '+url,response.data);
+            let { Biocides } = this.state
+                this.setState({Biocides:response.data}, () => {
+                    // search holder
+                     this.arrayholder = response.data;
+                    });
+        }).catch((error) => {
+                               
+            
+            const msg = error.message                
+            // console.log(msg+url, error.message)
+            if(Platform.OS=='android'){
+                ToastAndroid.show(msg,ToastAndroid.SHORT)
+            }else{
+                Alert.alert('',msg)
+            }
+        })
     }
     
     
@@ -58,20 +88,43 @@ export default class Home extends Component{
                     {/* end kotakan */}
                     </View>
 
-                    <View style={{marginTop:30,marginLeft:20,backgroundColor:'#f1ebbb',marginRight:20,borderRadius:5,width:150,height:40}}>
+                    <View style={{marginTop:30,marginLeft:20,backgroundColor:'#f1ebbb',marginRight:20,borderRadius:5,width:200,height:40}}>
                         <Text style={{marginTop:6,marginLeft:15,fontSize:18,color:'#45046a',fontWeight:"bold"}}>Stock Menipis</Text>
                     </View>
                     
-                    <View style={[css.row,{marginLeft:10,padding:10}]}>
-                        <Text style={{flex:3,fontSize:16,fontWeight:"bold"}}>Nama</Text>
-                        <Text style={{flex:1,fontSize:16,fontWeight:"bold"}}>Stock</Text>
-                        <Text style={{flex:1,fontSize:16,fontWeight:"bold"}}>Minimum</Text>
-                    </View>
+                   
                      <View style={[css.row,{marginLeft:10,padding:10}]}>
                         <Text style={{flex:3,fontSize:16}}>Algacide</Text>
                         <Text style={{flex:1,fontSize:16}}>10</Text>
                         <Text style={{flex:1,fontSize:16}}>10</Text>
                     </View>
+
+                     <FlatList key="flatList"
+                                    data={this.state.Biocides}
+                                    ListHeaderComponent={() => (
+                                        <>          
+                                        <View style={[css.row,{marginLeft:10,padding:10}]}>
+                                            <Text style={{flex:3,fontSize:16,fontWeight:"bold"}}>Nama</Text>
+                                            <Text style={{flex:1,fontSize:16,fontWeight:"bold"}}>Jenis</Text>
+                                            <Text style={{flex:1,fontSize:16,fontWeight:"bold"}}>Minimum</Text>
+                                            <Text style={{flex:1,fontSize:16,fontWeight:"bold"}}>Stock</Text>
+                                        </View>
+                                        </>
+                                    )}
+                                    keyExtractor={(item, index) => (`${item}--${index}`)}
+                                    refreshing={ this.state.refreshing }
+                                    onRefresh={()=> this.GetAPI() }
+                                    renderItem = {({ item, index }) => (
+                                   <TouchableOpacity style={{borderColor:'#006680'}}>
+                                        <View style={[css.row,{marginLeft:10,marginTop:20}]}>
+                                            <Text style={{ flex:4,fontSize:16,fontWeight:"bold"}}>{item.nama}</Text>
+                                            <Text style={{flex:4,fontSize:16,fontWeight:"bold"}}>{item.jenis}</Text>
+                                            <Text style={{flex:4,fontSize:16,fontWeight:"bold"}}>{item.minimum_stock}</Text>
+                                            <Text style={{flex:4,fontSize:16,fontWeight:"bold",marginRight:10}}>{item.stock}</Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                    )
+                        } />
             </View>
         )
     }
