@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import {Alert,SafeAreaView,ScrollView,View,Text,StatusBar,Image,AsyncStorage,TextInput,TouchableOpacity,ImageBackground,BackHandler,FlatList} from 'react-native';
+import {Alert,SafeAreaView,ScrollView,View,Linking,Text,StatusBar,Image,AsyncStorage,TextInput,TouchableOpacity,ImageBackground,BackHandler,FlatList} from 'react-native';
 import { Header,LearnMoreLinks,Colors,DebugInstructions,ReloadInstructions,} from 'react-native/Libraries/NewAppScreen';
 import css from '../assets/stylesheet/styles';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Api } from '../helper/api';
+
 
 const api = new Api();
 
@@ -22,6 +23,7 @@ export default class Home extends Component{
                 this.GetAPI = this.GetAPI.bind(this)
                 this.logout = this.logout.bind(this)
                 this.alertuser = this.alertuser.bind(this)
+                this.renderdownload = this.renderdownload.bind(this)
         }
 
      componentDidMount(){
@@ -40,7 +42,7 @@ export default class Home extends Component{
         await api.create();
         let client = api.getClient();
         let { Biocides } = this.state;
-        let url = '/reminder'
+        let url = '/homes'
        return client.get(url).then((response)=>{
             console.log('reminder Detail: '+url,response.data);
             let { Biocides } = this.state
@@ -116,7 +118,29 @@ export default class Home extends Component{
                         </Text>
                     </View>
                     </TouchableOpacity>
+                    
                     {/* end kotakan */}
+                    </View>
+
+                    <View style={css.row}>
+                     <TouchableOpacity 
+                                    onPress={() => this.renderdownload("biocide")}>
+                    <View style={{marginTop:30,marginLeft:10,width:120,height:120,backgroundColor:'#f37121',borderRadius:15}}>
+                    <Image source={require('../assets/images/biocide.png')} style={{marginTop:20,width:48,height:48,marginLeft:25}}/>
+                        <Text style={{marginTop:5,marginLeft:15,fontSize:14,color:'white'}}>
+                            Excel Biocide
+                        </Text>
+                    </View>
+                    </TouchableOpacity>
+                     <TouchableOpacity 
+                                    onPress={() => this.renderdownload("stock")}>
+                    <View style={{marginTop:30,marginLeft:10,width:120,height:120,backgroundColor:'#184d47',borderRadius:15}}>
+                        <Image source={require('../assets/images/stock.png')} style={{marginTop:20,width:48,height:48,marginLeft:25}}/>
+                         <Text style={{marginTop:5,marginLeft:15,fontSize:14,color:'white'}}>
+                            Excel Stock
+                        </Text>
+                    </View>
+                    </TouchableOpacity>
                     </View>
 
                     <View style={{marginTop:30,marginLeft:20,backgroundColor:'#f1ebbb',marginRight:20,borderRadius:5,width:200,height:40}}>
@@ -152,6 +176,15 @@ export default class Home extends Component{
         )
     }
 
+    async renderdownload(url){
+        var uri = '';
+        if(url === "biocide"){
+             uri = 'http://192.168.1.6/api/biocidies/export';
+        }else{
+              uri = 'http://192.168.1.6/api/stock/export';
+        }
+        await Linking.openURL(uri);
+    }
 
     render(){
         return(

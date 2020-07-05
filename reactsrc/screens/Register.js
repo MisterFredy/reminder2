@@ -43,7 +43,7 @@ export default class Register extends Component{
         }).catch((error) => {
             // console.log('register error', error.response)
             let {data} = error.response;
-            Alert.alert('',JSON.stringify(data.errors))
+            Alert.alert('',JSON.stringify(data.errors).replace(/]|[[]/g, ''))
             //ToastAndroid.show(JSON.stringify(data.errors),ToastAndroid.SHORT)
             //this.setState({ loading:false, message:data.message, errors:{...data.errors} })
         })
