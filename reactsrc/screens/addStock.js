@@ -16,22 +16,25 @@ export default class addStock extends Component{
                  selectedValue : 'selected value',
                  setSelectedValue :'',
                  Biocides: [],
-                 refreshing:false,
-                 isLoading: true,
-                 input_stock:0
+                 input_stock:0,
+                 isLoading: false,
                 };
                 this.arrayholder = [];
                 this.GetBiocide = this.GetBiocide.bind(this)
         }
     
      componentDidMount(){
-             this.GetBiocide();
+             this.props.navigation.addListener('focus', () => {
+              this.GetBiocide();
+            });
     }
 
 
     
 
     async  GetBiocide(){
+       let isLoading = this.state;
+       this.setState({isLoading:true});
        let api = new Api();
         await api.create();
         let client = api.getClient();
@@ -41,7 +44,7 @@ export default class addStock extends Component{
               
             // console.log('refreshing Course Detail: '+url,response.data);
             let { Biocides } = this.state
-            this.setState({Biocides: response.data});
+            this.setState({Biocides: response.data,isLoading:false});
                
         }).catch((error) => {
             const msg = error.message                
@@ -56,6 +59,8 @@ export default class addStock extends Component{
 
 
     async TambahStock(){
+        let isLoading = this.state;
+        this.setState({isLoading:true});
         let api = new Api();
         await api.create();
         let client = api.getClient();
@@ -67,6 +72,7 @@ export default class addStock extends Component{
        }).then((response)=>{
             console.log(response.data)
             Alert.alert('','sukses tambah stock')
+            this.setState({isLoading:false});
             this.props.navigation.navigate('Stock');
         }).catch((error) => {
                                
@@ -84,7 +90,14 @@ export default class addStock extends Component{
     
 
      addStock({ navigation }){
-            
+            const {isLoading} = this.state;
+            if(isLoading){
+                return(
+                  <View style={css.middleItemCenter}>
+                        <ActivityIndicator size="large" color="#0000ff" />
+                 </View>
+              )
+            }else{
          
             return(
             <>
@@ -127,6 +140,7 @@ export default class addStock extends Component{
               </>
             
         )
+            }
     }
 
 

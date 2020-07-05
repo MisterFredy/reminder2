@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {SafeAreaView,FlatList,View,Text,StatusBar,Image,AsyncStorage,TextInput,RefreshControl,TouchableOpacity,ImageBackground,BackHandler,ScrollView,ToastAndroid} from 'react-native';
+import {SafeAreaView,FlatList,ActivityIndicator,View,Text,StatusBar,Image,AsyncStorage,TextInput,RefreshControl,TouchableOpacity,ImageBackground,BackHandler,ScrollView,ToastAndroid} from 'react-native';
 import { Header,LearnMoreLinks,Colors,DebugInstructions,ReloadInstructions,} from 'react-native/Libraries/NewAppScreen';
 import css from '../assets/stylesheet/styles';
 import { NavigationContainer } from '@react-navigation/native';
@@ -16,19 +16,23 @@ export default class Biocide extends Component{
                 this.state = {
                  Biocides: [],
                  refreshing:false,
-                 isLoading: true,
+                 isLoading: false,
                  text:''
                 };
                 this.arrayholder = [];
                 this.GetAPI = this.GetAPI.bind(this)
         }
 
-     componentDidMount(){
+     componentDidMount(){        
+            this.props.navigation.addListener('focus', () => {
              this.GetAPI();
-    }
+            });
+     }
 
 
   async  GetAPI(){
+      let isLoading = this.state;
+      this.setState({isLoading:true});
        let api = new Api();
         await api.create();
         let client = api.getClient();
@@ -36,15 +40,10 @@ export default class Biocide extends Component{
         let url = '/master_biocidies'
        return client.get(url).then((response)=>{
               
-            // console.log('refreshing Course Detail: '+url,response.data);
+             console.log('Biocide Detail: '+url,response.data);
             let { Biocides } = this.state
-                this.setState({Biocides:response.data}, () => {
-                    // search holder
-                     this.arrayholder = response.data;
-                    });
+                this.setState({Biocides:response.data,isLoading:false});
         }).catch((error) => {
-                               
-            
             const msg = error.message                
             // console.log(msg+url, error.message)
             if(Platform.OS=='android'){
@@ -58,7 +57,15 @@ export default class Biocide extends Component{
     
 
      Biocide({ navigation }){
-            const {Biocides} = this.state;
+         const {Biocides,isLoading} = this.state;
+          if(isLoading){
+              return(
+                  <View style={css.middleItemCenter}>
+                        <ActivityIndicator size="large" color="#0000ff" />
+                 </View>
+              )
+          }else{
+               
          if(Biocides.length <= 0){
              return(
                         <View style={css.middleItemCenter}>
@@ -94,8 +101,6 @@ export default class Biocide extends Component{
                                         </>
                                     )}
                                     keyExtractor={(item, index) => (`${item}--${index}`)}
-                                    refreshing={ this.state.refreshing }
-                                    onRefresh={()=> this.GetAPI() }
                                     renderItem = {({ item, index }) => (
                                    <TouchableOpacity style={{borderColor:'#006680'}}>
                                         <View style={[css.row,{marginLeft:10,marginTop:20}]}>
@@ -118,7 +123,9 @@ export default class Biocide extends Component{
             )
 
             return listBiocides;
-         } 
+            } 
+          }
+           
       }
             
             

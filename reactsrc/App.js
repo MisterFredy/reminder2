@@ -74,7 +74,6 @@ function MainStackNavigator() {
 
 function tabnavigator(){
     return(
-      
         <Tab.Navigator>
             <Tab.Screen name="Home" component={Home}  
             options={{
@@ -92,11 +91,6 @@ function tabnavigator(){
               
               tabBarIcon: () => 
               <Image source={require('./assets/images/stock.png')} style={{width:24,height:24}}/>,
-           }}/>
-            <Tab.Screen name="Notif" component={Notification} 
-            options={{
-              tabBarIcon: () => 
-              <Image source={require('./assets/images/notif.png')} style={{width:24,height:24}}/>,
            }}/>
         </Tab.Navigator>
     )

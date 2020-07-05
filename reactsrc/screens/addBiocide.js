@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Alert,SafeAreaView,ScrollView,View,Text,StatusBar,Image,AsyncStorage,TextInput,TouchableOpacity,ToastAndroid,ImageBackground,BackHandler} from 'react-native';
+import {Alert,SafeAreaView,ScrollView,ActivityIndicator,View,Text,StatusBar,Image,AsyncStorage,TextInput,TouchableOpacity,ToastAndroid,ImageBackground,BackHandler} from 'react-native';
 import { Header,LearnMoreLinks,Colors,DebugInstructions,ReloadInstructions,} from 'react-native/Libraries/NewAppScreen';
 import css from '../assets/stylesheet/styles';
 import { NavigationContainer } from '@react-navigation/native';
@@ -18,6 +18,7 @@ export default class addBiocide extends Component{
       minimum_stock: "",
       jenis:"",
       stock:"",
+      isLoading: false,
    }
    this.postAPI = this.postAPI.bind(this)
 }
@@ -31,6 +32,8 @@ export default class addBiocide extends Component{
 
 
     async postAPI(){
+        let isLoading = this.state;
+        this.setState({isLoading:true});
         let api = new Api();
         await api.create();
         let client = api.getClient();
@@ -43,6 +46,7 @@ export default class addBiocide extends Component{
                stock: this.state.stock
        }).then((response)=>{
                 Alert.alert('','Berhasil Tambah Biocide')
+                this.setState({isLoading:false});
                 this.props.navigation.navigate('Biocide');
         }).catch((error) => {
             const msg = error.message                
@@ -58,6 +62,14 @@ export default class addBiocide extends Component{
     
 
      addbiocide({ navigation }){
+         const {isLoading} = this.state;
+         if(isLoading){
+              return(
+                  <View style={css.middleItemCenter}>
+                        <ActivityIndicator size="large" color="#0000ff" />
+                 </View>
+              )
+          }else{
             return(
             <>
                     <TextInput
@@ -103,6 +115,7 @@ export default class addBiocide extends Component{
               </>
             
         )
+          }
     }
 
 

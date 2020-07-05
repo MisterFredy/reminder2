@@ -4,10 +4,10 @@
 			"path": "."
 		},
 		{
-			"path": "c:\\xampp\\htdocs\\react\\learninghub-mobile\\src"
+			"path": "C:\\xampp\\htdocs\\react\\learninghub-mobile"
 		},
 		{
-			"path": "c:\\xampp\\htdocs\\react\\learninghub-mobile"
+			"path": "..\\php\\reminder"
 		}
 	],
 	"settings": {}

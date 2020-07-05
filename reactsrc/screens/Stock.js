@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {SafeAreaView,FlatList,View,Text,StatusBar,Image,AsyncStorage,TextInput,RefreshControl,TouchableOpacity,ImageBackground,BackHandler,ScrollView,ToastAndroid} from 'react-native';
+import {SafeAreaView,FlatList,View,Text,StatusBar,Image,AsyncStorage,ActivityIndicator,TextInput,RefreshControl,TouchableOpacity,ImageBackground,BackHandler,ScrollView,ToastAndroid} from 'react-native';
 import { Header,LearnMoreLinks,Colors,DebugInstructions,ReloadInstructions,} from 'react-native/Libraries/NewAppScreen';
 import css from '../assets/stylesheet/styles';
 import { NavigationContainer } from '@react-navigation/native';
@@ -17,15 +17,20 @@ export default class Stock extends Component{
                 this.state = {
                  Biocides: [],
                  refreshing:false,
+                 isLoading:false,
                 };
                 this.GetAPI = this.GetAPI.bind(this)
         }
 
      componentDidMount(){
+             this.props.navigation.addListener('focus', () => {
              this.GetAPI();
+            });
     }
 
   async  GetAPI(){
+      let isLoading = this.state;
+      this.setState({isLoading:true});
        let api = new Api();
         await api.create();
         let client = api.getClient();
@@ -35,7 +40,7 @@ export default class Stock extends Component{
               
             // console.log('refreshing Course Detail: '+url,response.data);
             let { Biocides } = this.state
-                this.setState({Biocides:response.data})
+                this.setState({Biocides:response.data,isLoading:false})
         }).catch((error) => {
                                
             
@@ -54,8 +59,16 @@ export default class Stock extends Component{
     
 
      Stock({ navigation }){
-            const {Biocides} = this.state;
-         if(Biocides.length == 0){
+         
+            const {Biocides,isLoading} = this.state;
+            if(isLoading){
+                return(
+                  <View style={css.middleItemCenter}>
+                        <ActivityIndicator size="large" color="#0000ff" />
+                 </View>
+              )
+            }else{
+                 if(Biocides.length == 0){
              return(       
                   <View style={css.middleItemCenter}>
                             <View style={css.aligncenter}>
@@ -97,8 +110,8 @@ export default class Stock extends Component{
                                         </>
                                     )}
                                     keyExtractor={(item, index) => (`${item}--${index}`)}
-                                    refreshing={ this.state.refreshing }
-                                    onRefresh={()=> this.GetAPI() }
+                                    // refreshing={ this.state.refreshing }
+                                    // onRefresh={()=> this.GetAPI() }
                                     renderItem = {({ item, index }) => (
                                    <TouchableOpacity style={{borderColor:'#006680'}}>
                                         <View style={[css.row,{marginLeft:10,marginTop:20}]}>
@@ -121,7 +134,9 @@ export default class Stock extends Component{
             )
 
             return listBiocides;
-         } 
+         
+            }
+        } 
       }
             
             

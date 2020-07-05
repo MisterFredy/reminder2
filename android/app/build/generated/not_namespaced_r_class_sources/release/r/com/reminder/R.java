@@ -6502,13 +6502,12 @@ public final class R {
     public static final int reactsrc_assets_images_home=0x7f070093;
     public static final int reactsrc_assets_images_logo=0x7f070094;
     public static final int reactsrc_assets_images_nextupdate=0x7f070095;
-    public static final int reactsrc_assets_images_notif=0x7f070096;
-    public static final int reactsrc_assets_images_stock=0x7f070097;
-    public static final int reactsrc_assets_images_user=0x7f070098;
-    public static final int redbox_top_border_background=0x7f070099;
-    public static final int test_custom_background=0x7f07009a;
-    public static final int tooltip_frame_dark=0x7f07009b;
-    public static final int tooltip_frame_light=0x7f07009c;
+    public static final int reactsrc_assets_images_stock=0x7f070096;
+    public static final int reactsrc_assets_images_user=0x7f070097;
+    public static final int redbox_top_border_background=0x7f070098;
+    public static final int test_custom_background=0x7f070099;
+    public static final int tooltip_frame_dark=0x7f07009a;
+    public static final int tooltip_frame_light=0x7f07009b;
   }
   public static final class id {
     public static final int ALT=0x7f080000;

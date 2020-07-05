@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
-import {SafeAreaView,ScrollView,View,Text,StatusBar,Image,AsyncStorage,TextInput,TouchableOpacity,ImageBackground,BackHandler} from 'react-native';
+import {Alert,SafeAreaView,ScrollView,View,Text,StatusBar,Image,AsyncStorage,TextInput,TouchableOpacity,ImageBackground,BackHandler,FlatList} from 'react-native';
 import { Header,LearnMoreLinks,Colors,DebugInstructions,ReloadInstructions,} from 'react-native/Libraries/NewAppScreen';
 import css from '../assets/stylesheet/styles';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { Api } from '../helper/api';
+
+const api = new Api();
 
 export default class Home extends Component{
 
@@ -13,16 +16,23 @@ export default class Home extends Component{
                 this.state = {
                  Biocides: [],
                  refreshing:false,
-                 isLoading: true,
+                 isLoading: false,
+                 username:"anonim",
                 };
                 this.GetAPI = this.GetAPI.bind(this)
+                this.logout = this.logout.bind(this)
+                this.alertuser = this.alertuser.bind(this)
         }
 
      componentDidMount(){
-         BackHandler.removeEventListener(
-            'hardwareBackPress',
-            true
-            );
+            this.props.navigation.addListener('focus', () => {
+             this.GetAPI();
+            });
+            AsyncStorage.getItem('user')
+            .then((value) => {
+            const data = JSON.parse(value);
+            this.setState({username:data.name})
+            });
     }
 
     async  GetAPI(){
@@ -32,13 +42,9 @@ export default class Home extends Component{
         let { Biocides } = this.state;
         let url = '/reminder'
        return client.get(url).then((response)=>{
-              
-            // console.log('refreshing Course Detail: '+url,response.data);
+            console.log('reminder Detail: '+url,response.data);
             let { Biocides } = this.state
-                this.setState({Biocides:response.data}, () => {
-                    // search holder
-                     this.arrayholder = response.data;
-                    });
+                this.setState({Biocides:response.data});
         }).catch((error) => {
                                
             
@@ -52,17 +58,42 @@ export default class Home extends Component{
         })
     }
     
+    alertuser(){
+         Alert.alert(
+      "User Logout",
+      "are you sure want to log out?",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+        },
+        { text: "OK", 
+        onPress: () => this.logout()
+        
+        }
+      ],
+      { cancelable: false }
+    );
+    }
     
+    logout(){
+         AsyncStorage.removeItem('user');
+                       AsyncStorage.removeItem('api_token');
+                        BackHandler.exitApp();
+    }
 
      login({ navigation }){
             return(
             <View style={css.backgroundWhite}>
                     <View style={css.row}>
                         <View style={css.col,{flex:1}}>
-                            <Text style={{marginLeft:30,marginTop:50,fontSize:18, fontWeight: "bold"}}>Hey Fredy</Text>
-                            <Text style={{marginLeft:30,marginTop:5,fontSize:18, fontWeight: "normal"}}>it's last activites</Text>
+                            <Text style={{marginLeft:30,marginTop:50,fontSize:18, fontWeight: "bold"}}>Hey {this.state.username}</Text>
+                            <Text style={{marginLeft:30,marginTop:5,fontSize:18, fontWeight: "normal"}}>selamat datang</Text>
                         </View>
+                        <TouchableOpacity 
+                                    onPress={() => this.alertuser()}>
                          <Image source={require('../assets/images/user.png')} style={{marginTop:50,width:64,height:64,marginRight:20}}/>
+                         </TouchableOpacity>
                     </View>
                     {/*kotakan  */}
                     <View style={css.row}>
@@ -92,12 +123,6 @@ export default class Home extends Component{
                         <Text style={{marginTop:6,marginLeft:15,fontSize:18,color:'#45046a',fontWeight:"bold"}}>Stock Menipis</Text>
                     </View>
                     
-                   
-                     <View style={[css.row,{marginLeft:10,padding:10}]}>
-                        <Text style={{flex:3,fontSize:16}}>Algacide</Text>
-                        <Text style={{flex:1,fontSize:16}}>10</Text>
-                        <Text style={{flex:1,fontSize:16}}>10</Text>
-                    </View>
 
                      <FlatList key="flatList"
                                     data={this.state.Biocides}
@@ -105,15 +130,13 @@ export default class Home extends Component{
                                         <>          
                                         <View style={[css.row,{marginLeft:10,padding:10}]}>
                                             <Text style={{flex:3,fontSize:16,fontWeight:"bold"}}>Nama</Text>
-                                            <Text style={{flex:1,fontSize:16,fontWeight:"bold"}}>Jenis</Text>
-                                            <Text style={{flex:1,fontSize:16,fontWeight:"bold"}}>Minimum</Text>
-                                            <Text style={{flex:1,fontSize:16,fontWeight:"bold"}}>Stock</Text>
+                                            <Text style={{flex:3,fontSize:16,fontWeight:"bold"}}>Jenis</Text>
+                                            <Text style={{flex:3,fontSize:16,fontWeight:"bold"}}>Minimum</Text>
+                                            <Text style={{flex:3,fontSize:16,fontWeight:"bold"}}>Stock</Text>
                                         </View>
                                         </>
                                     )}
                                     keyExtractor={(item, index) => (`${item}--${index}`)}
-                                    refreshing={ this.state.refreshing }
-                                    onRefresh={()=> this.GetAPI() }
                                     renderItem = {({ item, index }) => (
                                    <TouchableOpacity style={{borderColor:'#006680'}}>
                                         <View style={[css.row,{marginLeft:10,marginTop:20}]}>

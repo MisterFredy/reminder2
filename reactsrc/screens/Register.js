@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {SafeAreaView,ScrollView,View,Text,StatusBar,Image,AsyncStorage,TextInput,TouchableOpacity,ImageBackground,Alert,Keyboard,KeyboardAvoidingView,TouchableWithoutFeedback} from 'react-native';
+import {SafeAreaView,ScrollView,View,ToastAndroid,Text,StatusBar,Image,AsyncStorage,TextInput,TouchableOpacity,ImageBackground,Alert,Keyboard,KeyboardAvoidingView,TouchableWithoutFeedback} from 'react-native';
 import { Header,LearnMoreLinks,Colors,DebugInstructions,ReloadInstructions,} from 'react-native/Libraries/NewAppScreen';
 import css from '../assets/stylesheet/styles';
 import { NavigationContainer } from '@react-navigation/native';
@@ -17,11 +17,12 @@ export default class Register extends Component{
       username:"",
       phone:0,
    }
+   
    this.registerApi = this.registerApi.bind(this)
 }
 
      async registerApi(){
-        this.setState({loading:true, message:'',})
+        this.setState({loading:true,})
 
         let api = new Api();
         await api.create();
@@ -42,8 +43,9 @@ export default class Register extends Component{
         }).catch((error) => {
             // console.log('register error', error.response)
             let {data} = error.response;
-            Alert.alert('',data.message)
-            this.setState({ loading:false, message:data.message, errors:{...data.errors} })
+            Alert.alert('',JSON.stringify(data.errors))
+            //ToastAndroid.show(JSON.stringify(data.errors),ToastAndroid.SHORT)
+            //this.setState({ loading:false, message:data.message, errors:{...data.errors} })
         })
         
     }

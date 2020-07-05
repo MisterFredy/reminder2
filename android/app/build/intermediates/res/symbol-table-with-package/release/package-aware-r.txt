@@ -1369,7 +1369,6 @@ drawable reactsrc_assets_images_empty
 drawable reactsrc_assets_images_home
 drawable reactsrc_assets_images_logo
 drawable reactsrc_assets_images_nextupdate
-drawable reactsrc_assets_images_notif
 drawable reactsrc_assets_images_stock
 drawable reactsrc_assets_images_user
 drawable redbox_top_border_background
